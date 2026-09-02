@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AleBolos — Confeitaria Artesanal</title>
-<meta name="description" content="Bolos artesanais feitos com carinho. Escolha sua massa, recheio e cobertura e faça seu pedido pelo WhatsApp.">
+<meta name="description" content="Bolos artesanais feitos com carinho. Monte seu bolo escolhendo tamanho, massa, recheio e cobertura, e envie o pedido direto pelo WhatsApp.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -43,6 +43,7 @@
   }
 
   a{ color:inherit; }
+  button{ font:inherit; }
 
   img{ max-width:100%; display:block; }
 
@@ -62,12 +63,6 @@
   }
   .brand{ display:flex; align-items:center; gap:12px; text-decoration:none; }
   .brand img{ height:52px; width:auto; }
-  .brand span{
-    font-family:'Playfair Display', serif;
-    font-size:1.25rem;
-    color:var(--rose-deep);
-    font-style:italic;
-  }
   nav{ display:flex; align-items:center; gap:28px; }
   nav a{
     text-decoration:none;
@@ -130,13 +125,15 @@
   }
   .btn-row{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
   .btn{
-    display:inline-flex; align-items:center; gap:8px;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
     padding:14px 30px;
     border-radius:999px;
     text-decoration:none;
     font-size:0.95rem;
     letter-spacing:0.01em;
-    transition:transform .2s ease, box-shadow .2s ease;
+    border:none;
+    cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
   }
   .btn-primary{
     background:var(--rose);
@@ -147,8 +144,13 @@
   .btn-ghost{
     border:1px solid var(--line);
     color:var(--ink);
+    background:transparent;
   }
   .btn-ghost:hover{ border-color:var(--rose); color:var(--rose-deep); }
+  .btn[aria-disabled="true"]{
+    background:#DED2CD; color:#8f8082;
+    box-shadow:none; cursor:not-allowed; pointer-events:none;
+  }
 
   /* ---------- Section shell ---------- */
   section{ padding:80px 24px; }
@@ -178,71 +180,7 @@
     color:var(--ink-soft); font-size:0.9rem;
   }
 
-  /* ---------- Massas ---------- */
-  .massas-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:20px;
-    max-width:820px; margin:0 auto;
-  }
-  .massa-card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:26px 14px;
-    text-align:center;
-  }
-  .massa-swatch{
-    width:44px; height:44px;
-    border-radius:50%;
-    margin:0 auto 14px;
-    border:1px solid rgba(0,0,0,0.06);
-  }
-  .massa-card h3{
-    font-family:'Jost', sans-serif;
-    color:var(--ink);
-    font-weight:500;
-    font-size:0.95rem;
-  }
-  .sw-branca{ background:#F8EEDD; }
-  .sw-chocolate{ background:#6B4226; }
-  .sw-redvelvet{ background:linear-gradient(180deg,#9A2B3B 55%, #fff 55%); }
-  .sw-cacau{ background:#2E1B14; }
-
-  /* ---------- Recheios two column ---------- */
-  .recheios-cols{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:56px;
-    max-width:880px; margin:0 auto;
-  }
-  .recheio-block h3{
-    font-family:'Jost', sans-serif;
-    color:var(--gold);
-    font-weight:600;
-    font-size:0.85rem;
-    letter-spacing:0.08em;
-    margin-bottom:18px;
-    padding-bottom:10px;
-    border-bottom:1px solid var(--line);
-  }
-  .recheio-list{ list-style:none; }
-  .recheio-list li{
-    padding:11px 0;
-    border-bottom:1px dashed var(--line);
-    display:flex; align-items:baseline; gap:10px;
-    font-size:0.96rem;
-  }
-  .recheio-list li:last-child{ border-bottom:none; }
-  .recheio-list li::before{
-    content:"♥";
-    color:var(--rose);
-    font-size:0.75rem;
-    flex:none;
-    margin-right:10px;
-  }
-
-  /* ---------- Bolos table ---------- */
+  /* ---------- Bolos table (referência) ---------- */
   .table-wrap{
     max-width:760px; margin:0 auto;
     background:#fff;
@@ -278,20 +216,82 @@
     padding:10px 20px;
   }
 
-  /* ---------- Cobertura ---------- */
-  .cobertura-row{
-    display:flex; justify-content:center; gap:20px; flex-wrap:wrap;
-    max-width:600px; margin:0 auto;
+  /* ---------- Configurador de pedido ---------- */
+  .builder{
+    max-width:760px; margin:0 auto;
+    display:flex; flex-direction:column; gap:40px;
   }
-  .cobertura-pill{
+  .builder-step[data-locked="true"]{ opacity:0.45; }
+  .step-label{
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    color:var(--rose-deep);
+    font-size:1.15rem;
+    margin-bottom:16px;
+  }
+  .step-num{
+    width:28px; height:28px; border-radius:50%;
+    background:var(--rose); color:#fff;
+    font-family:'Jost', sans-serif; font-style:normal;
+    font-size:0.85rem; font-weight:500;
+    display:inline-flex; align-items:center; justify-content:center;
+    flex:none;
+  }
+  .step-hint{
+    font-family:'Jost', sans-serif; font-style:normal;
+    font-size:0.8rem; color:var(--ink-soft); font-weight:400;
+  }
+
+  .chip-row{ display:flex; flex-wrap:wrap; gap:12px; }
+  .chip{
+    font-family:'Jost', sans-serif;
     border:1px solid var(--line);
     background:#fff;
-    padding:14px 26px;
-    border-radius:999px;
-    font-size:0.95rem;
-    display:flex; align-items:center; gap:10px;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:0.92rem;
+    color:var(--ink);
+    display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+    transition:border-color .2s ease, background .2s ease, opacity .2s ease;
+    text-align:left;
   }
-  .cobertura-pill::before{ content:"✦"; color:var(--gold); font-size:0.8rem; }
+  .chip strong{ font-weight:500; }
+  .chip small{ color:var(--ink-soft); font-size:0.76rem; }
+  .chip:hover:not(:disabled){ border-color:var(--rose); }
+  .chip.selected{ border-color:var(--rose); background:var(--blush); }
+  .chip.selected, .chip.selected strong{ color:var(--rose-deep); }
+  .chip:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .chip-massa{ flex-direction:row; align-items:center; }
+  .chip-massa .dot{
+    width:14px; height:14px; border-radius:50%;
+    display:inline-block; border:1px solid rgba(0,0,0,0.08);
+  }
+  .sw-branca{ background:#F8EEDD; }
+  .sw-chocolate{ background:#6B4226; }
+  .sw-redvelvet{ background:linear-gradient(180deg,#9A2B3B 55%, #fff 55%); }
+  .sw-cacau{ background:#2E1B14; }
+
+  .recheio-group{ margin-bottom:20px; }
+  .recheio-group:last-child{ margin-bottom:0; }
+  .group-label{
+    font-size:0.8rem; color:var(--gold);
+    margin-bottom:10px; letter-spacing:0.03em;
+  }
+
+  .builder-summary{
+    background:#fff; border:1px solid var(--line); border-radius:8px;
+    padding:28px 26px;
+  }
+  .builder-summary h3{ font-size:1.05rem; margin-bottom:16px; font-style:italic; }
+  #summaryList{ list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:4px; }
+  #summaryList li{ font-size:0.95rem; display:flex; gap:10px; }
+  #summaryList li .label{ color:var(--ink-soft); min-width:96px; flex:none; }
+  #summaryList li.empty{ color:var(--ink-soft); font-style:italic; }
+  .fruit-note{ font-size:0.85rem; color:var(--gold); margin:14px 0 4px; }
+  .btn-block{ width:100%; margin-top:18px; }
 
   /* ---------- CTA / Footer ---------- */
   .cta-band{
@@ -335,8 +335,6 @@
       background:none; border:none; cursor:pointer; padding:8px;
     }
     .nav-toggle span{ width:22px; height:2px; background:var(--ink); display:block; }
-    .massas-grid{ grid-template-columns:repeat(2, 1fr); }
-    .recheios-cols{ grid-template-columns:1fr; gap:38px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -356,9 +354,8 @@
       <span></span><span></span><span></span>
     </button>
     <nav id="siteNav">
-      <a href="#massas">Massas</a>
-      <a href="#recheios">Recheios</a>
-      <a href="#bolos">Bolos</a>
+      <a href="#montar-bolo">Monte seu bolo</a>
+      <a href="#bolos">Tamanhos</a>
       <a href="#contato">Contato</a>
       <a class="nav-cta" href="https://wa.me/5562998691706" target="_blank" rel="noopener">Pedir agora</a>
     </nav>
@@ -371,68 +368,21 @@
   <h1>Sabor que encanta, carinho que fica</h1>
   <p>Bolos feitos à mão, com massas, recheios e coberturas que você escolhe do seu jeito.</p>
   <div class="btn-row">
-    <a class="btn btn-primary" href="https://wa.me/5562998691706" target="_blank" rel="noopener">Fazer pedido pelo WhatsApp</a>
-    <a class="btn btn-ghost" href="#bolos">Ver tamanhos e preços</a>
+    <a class="btn btn-primary" href="#montar-bolo">Montar meu bolo</a>
+    <a class="btn btn-ghost" href="https://wa.me/5562998691706" target="_blank" rel="noopener">Falar direto no WhatsApp</a>
   </div>
 </section>
 
 <section class="alt-bg" id="cardapio-ilustrado">
   <div class="wrap section-head">
     <span class="kicker">CARDÁPIO</span>
-    <h2>Monte o seu bolo</h2>
-    <p>Escolha a massa, o recheio e a cobertura. Todo o cardápio ilustrado abaixo, com as opções detalhadas logo em seguida.</p>
+    <h2>Conheça todas as opções</h2>
+    <p>O cardápio completo ilustrado. Para montar e enviar seu pedido, use o passo a passo logo abaixo.</p>
   </div>
   <div class="poster-frame">
     <img src="cardapio.jpg" alt="Cardápio completo AleBolos: massas, recheios, tamanhos de bolo e coberturas">
   </div>
-  <p class="poster-caption">Cardápio completo — veja também as opções detalhadas abaixo</p>
-</section>
-
-<section id="massas">
-  <div class="wrap section-head">
-    <span class="kicker">ETAPA 1</span>
-    <h2>Massas</h2>
-  </div>
-  <div class="wrap massas-grid">
-    <div class="massa-card"><div class="massa-swatch sw-branca"></div><h3>Branca</h3></div>
-    <div class="massa-card"><div class="massa-swatch sw-chocolate"></div><h3>Chocolate</h3></div>
-    <div class="massa-card"><div class="massa-swatch sw-redvelvet"></div><h3>Red Velvet</h3></div>
-    <div class="massa-card"><div class="massa-swatch sw-cacau"></div><h3>Cacau Black</h3></div>
-  </div>
-</section>
-
-<section class="alt-bg" id="recheios">
-  <div class="wrap section-head">
-    <span class="kicker">ETAPA 2</span>
-    <h2>Recheios</h2>
-  </div>
-  <div class="wrap recheios-cols">
-    <div class="recheio-block">
-      <h3>CLÁSSICOS</h3>
-      <ul class="recheio-list">
-        <li>Ninho</li>
-        <li>Ninho e geleia de morango</li>
-        <li>Brigadeiro de chocolate e geleia de morango</li>
-        <li>Brigadeiro de chocolate</li>
-        <li>Prestígio</li>
-        <li>Abacaxi e coco</li>
-        <li>Brigadeiro de ninho e brigadeiro de chocolate</li>
-      </ul>
-    </div>
-    <div class="recheio-block">
-      <h3>ESPECIAIS</h3>
-      <ul class="recheio-list">
-        <li>4 leites</li>
-        <li>Brigadeiro de limão</li>
-        <li>Brigadeiro de maracujá</li>
-        <li>Brigadeiro de doce de leite</li>
-        <li>Brigadeiro de oreo</li>
-        <li>Caramelo salgado</li>
-        <li>Limão siciliano e frutas vermelhas</li>
-        <li>Olho de sogra</li>
-      </ul>
-    </div>
-  </div>
+  <p class="poster-caption">Cardápio completo — veja também o passo a passo para pedir</p>
 </section>
 
 <section id="bolos">
@@ -463,20 +413,108 @@
   </div>
 </section>
 
-<section class="alt-bg">
+<section class="alt-bg" id="montar-bolo">
   <div class="wrap section-head">
-    <span class="kicker">ETAPA 3</span>
-    <h2>Cobertura</h2>
+    <span class="kicker">MONTE SEU PEDIDO</span>
+    <h2>Passo a passo até o WhatsApp</h2>
+    <p>Escolha o tamanho, a massa, o(s) recheio(s) e a cobertura. O pedido é montado automaticamente para você enviar.</p>
   </div>
-  <div class="wrap cobertura-row">
-    <span class="cobertura-pill">Chantininho</span>
-    <span class="cobertura-pill">Chantinache (chantilly e chocolate)</span>
+
+  <div class="wrap builder">
+
+    <!-- Passo 1: Tamanho -->
+    <div class="builder-step" data-step="tamanho">
+      <div class="step-label"><span class="step-num">1</span>Tamanho</div>
+      <div class="chip-row" id="tamanhoOptions">
+        <button type="button" class="chip chip-size" data-tamanho="10 cm" data-max="1" data-rendimento="6 fatias">
+          <strong>10 cm</strong><small>6 fatias · 1 recheio</small>
+        </button>
+        <button type="button" class="chip chip-size" data-tamanho="13 cm" data-max="2" data-rendimento="10 fatias">
+          <strong>13 cm</strong><small>10 fatias · até 2 recheios</small>
+        </button>
+        <button type="button" class="chip chip-size" data-tamanho="15 cm" data-max="2" data-rendimento="15 fatias">
+          <strong>15 cm</strong><small>15 fatias · até 2 recheios</small>
+        </button>
+        <button type="button" class="chip chip-size" data-tamanho="20 cm" data-max="2" data-rendimento="25 fatias">
+          <strong>20 cm</strong><small>25 fatias · até 2 recheios</small>
+        </button>
+        <button type="button" class="chip chip-size" data-tamanho="25 cm" data-max="2" data-rendimento="30 fatias">
+          <strong>25 cm</strong><small>30 fatias · até 2 recheios</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Passo 2: Massa -->
+    <div class="builder-step" data-step="massa">
+      <div class="step-label"><span class="step-num">2</span>Massa</div>
+      <div class="chip-row" id="massaOptions">
+        <button type="button" class="chip chip-massa" data-massa="Branca"><span class="dot sw-branca"></span>Branca</button>
+        <button type="button" class="chip chip-massa" data-massa="Chocolate"><span class="dot sw-chocolate"></span>Chocolate</button>
+        <button type="button" class="chip chip-massa" data-massa="Red Velvet"><span class="dot sw-redvelvet"></span>Red Velvet</button>
+        <button type="button" class="chip chip-massa" data-massa="Cacau Black"><span class="dot sw-cacau"></span>Cacau Black</button>
+      </div>
+    </div>
+
+    <!-- Passo 3: Recheio -->
+    <div class="builder-step" id="recheioStep" data-step="recheio" data-locked="true">
+      <div class="step-label">
+        <span class="step-num">3</span>Recheio
+        <span class="step-hint" id="recheioHint">escolha o tamanho primeiro</span>
+      </div>
+      <div id="recheioOptions">
+        <div class="recheio-group">
+          <p class="group-label">Clássicos</p>
+          <div class="chip-row">
+            <button type="button" class="chip chip-recheio" data-recheio="Ninho" disabled>Ninho</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Ninho e geleia de morango" data-fruta="true" disabled>Ninho e geleia de morango</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de chocolate e geleia de morango" data-fruta="true" disabled>Brigadeiro de chocolate e geleia de morango</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de chocolate" disabled>Brigadeiro de chocolate</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Prestígio" disabled>Prestígio</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Abacaxi e coco" data-fruta="true" disabled>Abacaxi e coco</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de ninho e brigadeiro de chocolate" disabled>Brigadeiro de ninho e brigadeiro de chocolate</button>
+          </div>
+        </div>
+        <div class="recheio-group">
+          <p class="group-label">Especiais</p>
+          <div class="chip-row">
+            <button type="button" class="chip chip-recheio" data-recheio="4 leites" disabled>4 leites</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de limão" data-fruta="true" disabled>Brigadeiro de limão</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de maracujá" data-fruta="true" disabled>Brigadeiro de maracujá</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de doce de leite" disabled>Brigadeiro de doce de leite</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Brigadeiro de oreo" disabled>Brigadeiro de oreo</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Caramelo salgado" disabled>Caramelo salgado</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Limão siciliano e frutas vermelhas" data-fruta="true" disabled>Limão siciliano e frutas vermelhas</button>
+            <button type="button" class="chip chip-recheio" data-recheio="Olho de sogra" disabled>Olho de sogra</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Passo 4: Cobertura -->
+    <div class="builder-step" data-step="cobertura">
+      <div class="step-label"><span class="step-num">4</span>Cobertura</div>
+      <div class="chip-row" id="coberturaOptions">
+        <button type="button" class="chip chip-cobertura" data-cobertura="Chantininho">Chantininho</button>
+        <button type="button" class="chip chip-cobertura" data-cobertura="Chantinache (chantilly e chocolate)">Chantinache (chantilly e chocolate)</button>
+      </div>
+    </div>
+
+    <!-- Resumo -->
+    <div class="builder-summary">
+      <h3>Resumo do pedido</h3>
+      <ul id="summaryList">
+        <li class="empty">Escolha as opções acima para montar seu bolo</li>
+      </ul>
+      <p class="fruit-note" id="fruitNote" hidden>Acréscimo de R$ 5,00 para recheios com frutas.</p>
+      <a class="btn btn-primary btn-block" id="sendOrderBtn" href="#" target="_blank" rel="noopener" aria-disabled="true">Enviar pedido pelo WhatsApp</a>
+    </div>
+
   </div>
 </section>
 
 <div class="cta-band" id="contato">
-  <h2>Vamos combinar o seu bolo?</h2>
-  <p>Fale agora pelo WhatsApp e monte a combinação perfeita de massa, recheio e cobertura.</p>
+  <h2>Prefere combinar direto?</h2>
+  <p>Fale agora pelo WhatsApp e a gente monta seu bolo juntos, do jeitinho que você quiser.</p>
   <a class="btn btn-primary" href="https://wa.me/5562998691706" target="_blank" rel="noopener">62 99869-1706 — Chamar no WhatsApp</a>
 </div>
 
@@ -485,12 +523,161 @@
 </footer>
 
 <script>
+  // Menu mobile
   const toggle = document.getElementById('navToggle');
   const nav = document.getElementById('siteNav');
   toggle.addEventListener('click', () => nav.classList.toggle('open'));
   document.querySelectorAll('nav a').forEach(link => {
     link.addEventListener('click', () => nav.classList.remove('open'));
   });
+
+  // ---------- Configurador de pedido ----------
+  const WHATSAPP_NUMBER = '5562998691706';
+
+  const order = {
+    tamanho: null,
+    rendimento: null,
+    maxRecheios: 0,
+    massa: null,
+    recheios: [],
+    cobertura: null
+  };
+
+  const recheioStep = document.getElementById('recheioStep');
+  const recheioHint = document.getElementById('recheioHint');
+  const recheioChips = Array.from(document.querySelectorAll('.chip-recheio'));
+  const summaryList = document.getElementById('summaryList');
+  const fruitNote = document.getElementById('fruitNote');
+  const sendBtn = document.getElementById('sendOrderBtn');
+
+  function selectSingle(chips, chip, onSelect){
+    chips.forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    onSelect(chip);
+  }
+
+  // Passo 1: Tamanho
+  const tamanhoChips = Array.from(document.querySelectorAll('.chip-size'));
+  tamanhoChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      selectSingle(tamanhoChips, chip, () => {
+        order.tamanho = chip.dataset.tamanho;
+        order.rendimento = chip.dataset.rendimento;
+        order.maxRecheios = parseInt(chip.dataset.max, 10);
+      });
+
+      // Destrava o passo de recheio
+      recheioStep.dataset.locked = 'false';
+      recheioChips.forEach(c => c.disabled = false);
+      recheioHint.textContent = order.maxRecheios === 1
+        ? 'escolha 1 recheio'
+        : `escolha até ${order.maxRecheios} recheios`;
+
+      // Ajusta seleção de recheios ao novo limite
+      if (order.recheios.length > order.maxRecheios){
+        const excedentes = order.recheios.slice(order.maxRecheios);
+        order.recheios = order.recheios.slice(0, order.maxRecheios);
+        recheioChips.forEach(c => {
+          if (excedentes.includes(c.dataset.recheio)) c.classList.remove('selected');
+        });
+      }
+      updateRecheioLocks();
+      updateSummary();
+    });
+  });
+
+  // Passo 2: Massa
+  const massaChips = Array.from(document.querySelectorAll('.chip-massa'));
+  massaChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      selectSingle(massaChips, chip, () => { order.massa = chip.dataset.massa; });
+      updateSummary();
+    });
+  });
+
+  // Passo 3: Recheio (múltipla escolha com limite)
+  recheioChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const nome = chip.dataset.recheio;
+      const jaSelecionado = chip.classList.contains('selected');
+
+      if (jaSelecionado){
+        chip.classList.remove('selected');
+        order.recheios = order.recheios.filter(r => r !== nome);
+      } else {
+        if (order.recheios.length >= order.maxRecheios) return;
+        chip.classList.add('selected');
+        order.recheios.push(nome);
+      }
+      updateRecheioLocks();
+      updateSummary();
+    });
+  });
+
+  function updateRecheioLocks(){
+    const atingiuLimite = order.recheios.length >= order.maxRecheios;
+    recheioChips.forEach(c => {
+      if (c.classList.contains('selected')) { c.disabled = false; return; }
+      c.disabled = atingiuLimite;
+    });
+  }
+
+  // Passo 4: Cobertura
+  const coberturaChips = Array.from(document.querySelectorAll('.chip-cobertura'));
+  coberturaChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      selectSingle(coberturaChips, chip, () => { order.cobertura = chip.dataset.cobertura; });
+      updateSummary();
+    });
+  });
+
+  function temRecheioComFruta(){
+    return recheioChips.some(c => c.classList.contains('selected') && c.dataset.fruta === 'true');
+  }
+
+  function updateSummary(){
+    const linhas = [];
+    if (order.tamanho) linhas.push(['Tamanho', `${order.tamanho} (${order.rendimento})`]);
+    if (order.massa) linhas.push(['Massa', order.massa]);
+    if (order.recheios.length) linhas.push(['Recheio(s)', order.recheios.join(', ')]);
+    if (order.cobertura) linhas.push(['Cobertura', order.cobertura]);
+
+    if (!linhas.length){
+      summaryList.innerHTML = '<li class="empty">Escolha as opções acima para montar seu bolo</li>';
+    } else {
+      summaryList.innerHTML = linhas
+        .map(([label, valor]) => `<li><span class="label">${label}:</span><span>${valor}</span></li>`)
+        .join('');
+    }
+
+    fruitNote.hidden = !temRecheioComFruta();
+
+    const completo = order.tamanho && order.massa && order.recheios.length > 0 && order.cobertura;
+    if (completo){
+      sendBtn.removeAttribute('aria-disabled');
+      sendBtn.href = buildWhatsAppLink();
+    } else {
+      sendBtn.setAttribute('aria-disabled', 'true');
+      sendBtn.href = '#';
+    }
+  }
+
+  function buildWhatsAppLink(){
+    const partes = [
+      'Olá! Gostaria de fazer um pedido de bolo 🎂',
+      '',
+      `Tamanho: ${order.tamanho} (${order.rendimento})`,
+      `Massa: ${order.massa}`,
+      `Recheio(s): ${order.recheios.join(', ')}`,
+      `Cobertura: ${order.cobertura}`
+    ];
+    if (temRecheioComFruta()){
+      partes.push('', 'Obs.: recheio com fruta — acréscimo de R$ 5,00');
+    }
+    partes.push('', 'Aguardo confirmação, obrigado(a)!');
+    const texto = encodeURIComponent(partes.join('\n'));
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${texto}`;
+  }
 </script>
 
 </body>
